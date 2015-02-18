@@ -64,7 +64,7 @@ class payeer
 		
 		$m_curr = $order->info['currency'];
 		
-        $m_amount = ceil(100 * $order->info['total']) * 0.01;
+        $m_amount = number_format($order->info['total'], 2, '.', '');
 
         $m_desc = base64_encode(MODULE_PAYMENT_PAYEER_ORDER_DESC);
 		
