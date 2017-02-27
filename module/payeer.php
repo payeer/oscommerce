@@ -80,12 +80,12 @@ if (isset($_POST["m_operation_id"]) && isset($_POST["m_sign"]))
 		
 		$order_id = preg_replace('/[^a-zA-Z0-9_-]/', '', substr($_POST['m_orderid'], 0, 32));
 		
-		$curr_query = tep_db_query('select currency from ' . TABLE_ORDERS . ' where orders_id = "' . $order_id . '"');
+		$curr_query = tep_db_query('select currency, orders_status from ' . TABLE_ORDERS . ' where orders_id = "' . $order_id . '"');
 		$amount_query = tep_db_query('select final_price from ' . TABLE_ORDERS_PRODUCTS . ' where orders_id = "' . $order_id . '"');
-		$curr_query_row = tep_db_fetch_array($curr_query);
+		$order = tep_db_fetch_array($curr_query);
 		$amount_query_row = tep_db_fetch_array($amount_query);
 		
-		$order_curr = ($curr_query_row['currency'] == 'RUR') ? 'RUB' : $curr_query_row['currency'];
+		$order_curr = ($order['currency'] == 'RUR') ? 'RUB' : $order['currency'];
 		$order_amount = number_format($amount_query_row['final_price'], 2, '.', '');
 
 		// проверка суммы и валюты
@@ -121,17 +121,20 @@ if (isset($_POST["m_operation_id"]) && isset($_POST["m_sign"]))
 					break;
 			}
 			
-			$sql_data_array = array('orders_status' => $status);
-			tep_db_perform('orders', $sql_data_array, 'update', "orders_id='" . $_POST['m_orderid'] . "'");
-			
-			$sql_data_arrax = array(
-				'orders_id' => $_POST['m_orderid'], 
-				'orders_status_id' => $status, 
-				'date_added' => 'now()', 
-				'customer_notified' => '0', 
-				'comments' => $comment
-			);
-			tep_db_perform('orders_status_history', $sql_data_arrax);
+			if ($order['orders_status'] == 1)
+			{
+				$sql_data_array = array('orders_status' => $status);
+				tep_db_perform('orders', $sql_data_array, 'update', "orders_id='" . $_POST['m_orderid'] . "'");
+				
+				$sql_data_arrax = array(
+					'orders_id' => $_POST['m_orderid'], 
+					'orders_status_id' => $status, 
+					'date_added' => 'now()', 
+					'customer_notified' => '0', 
+					'comments' => $comment
+				);
+				tep_db_perform('orders_status_history', $sql_data_arrax);
+			}
 		}
 	}
 	
