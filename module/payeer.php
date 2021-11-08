@@ -124,10 +124,10 @@ if (isset($_POST["m_operation_id"]) && isset($_POST["m_sign"]))
 			if ($order['orders_status'] == 1)
 			{
 				$sql_data_array = array('orders_status' => $status);
-				tep_db_perform('orders', $sql_data_array, 'update', "orders_id='" . $_POST['m_orderid'] . "'");
+				tep_db_perform('orders', $sql_data_array, 'update', "orders_id='" . $order_id . "'");
 				
 				$sql_data_arrax = array(
-					'orders_id' => $_POST['m_orderid'], 
+					'orders_id' => $order_id, 
 					'orders_status_id' => $status, 
 					'date_added' => 'now()', 
 					'customer_notified' => '0', 
