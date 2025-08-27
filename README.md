@@ -1,4 +1,4 @@
-osCommerce
+README.mdosCommerce
 ======
 Payment module Payeer
 
